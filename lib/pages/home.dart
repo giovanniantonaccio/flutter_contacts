@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:contacts_list/helpers/contact_helper.dart';
+import 'package:contacts_list/pages/contact.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,18 +18,14 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    helper.getAllContacts().then((list) {
-      setState(() {
-        contacts = list;
-      });
-    });
+    _getAllContacts();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Contatos'),
+        title: Text('Contacts'),
       ),
       body: ListView.builder(
         padding: EdgeInsets.all(16),
@@ -38,7 +35,9 @@ class _HomePageState extends State<HomePage> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          _showContactPage();
+        },
         child: Icon(Icons.add),
       ),
     );
@@ -52,8 +51,8 @@ class _HomePageState extends State<HomePage> {
           child: Row(
             children: <Widget>[
               Container(
-                width: 80,
-                height: 80,
+                width: 65,
+                height: 65,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
@@ -71,15 +70,15 @@ class _HomePageState extends State<HomePage> {
                     Text(
                       contacts[index].name ?? "",
                       style:
-                          TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     Text(
                       contacts[index].email ?? "",
-                      style: TextStyle(fontSize: 18),
+                      style: TextStyle(fontSize: 14),
                     ),
                     Text(
                       contacts[index].phone ?? "",
-                      style: TextStyle(fontSize: 18),
+                      style: TextStyle(fontSize: 14),
                     ),
                   ],
                 ),
@@ -88,6 +87,37 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
+      onTap: () {
+        _showContactPage(contact: contacts[index]);
+      },
     );
+  }
+
+  void _showContactPage({Contact contact}) async {
+    final recContact = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ContactPage(
+          contact: contact,
+        ),
+      ),
+    );
+    print(recContact);
+    if (recContact != null) {
+      if (contact != null) {
+        await helper.updateContact(recContact);
+      } else {
+        await helper.saveContact(recContact);
+      }
+      _getAllContacts();
+    }
+  }
+
+  void _getAllContacts() {
+    helper.getAllContacts().then((list) {
+      setState(() {
+        contacts = list;
+      });
+    });
   }
 }

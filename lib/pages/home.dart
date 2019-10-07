@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:contacts_list/helpers/contact_helper.dart';
 import 'package:contacts_list/pages/contact.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -26,6 +27,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Contacts'),
+        centerTitle: true,
       ),
       body: ListView.builder(
         padding: EdgeInsets.all(16),
@@ -88,9 +90,78 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       onTap: () {
-        _showContactPage(contact: contacts[index]);
+        _showOptions(context, index);
       },
     );
+  }
+
+  void _showOptions(BuildContext context, int index) {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return BottomSheet(
+            builder: (context) {
+              return Container(
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    ButtonTheme(
+                      minWidth: double.infinity,
+                      child: FlatButton(
+                        child: Text(
+                          'Call',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                        onPressed: () async {
+                          String url = 'tel:${contacts[index].phone}';
+                          print(url);
+                          print(await canLaunch(url));
+                          if (await canLaunch(url)) {
+                            await launch(url);
+                          } else {
+                            print('Could not launch $url');
+                          }
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                    ButtonTheme(
+                      minWidth: double.infinity,
+                      child: FlatButton(
+                        child: Text(
+                          'Edit',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          _showContactPage(contact: contacts[index]);
+                        },
+                      ),
+                    ),
+                    ButtonTheme(
+                      minWidth: double.infinity,
+                      child: FlatButton(
+                        child: Text(
+                          'Delete',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                        onPressed: () {
+                          helper.deleteContact(contacts[index].id);
+                          setState(() {
+                            contacts.removeAt(index);
+                            Navigator.pop(context);
+                          });
+                        },
+                      ),
+                    )
+                  ],
+                ),
+              );
+            },
+            onClosing: () {},
+          );
+        });
   }
 
   void _showContactPage({Contact contact}) async {

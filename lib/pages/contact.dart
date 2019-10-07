@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:contacts_list/helpers/contact_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ContactPage extends StatefulWidget {
   final Contact contact;
@@ -45,6 +46,7 @@ class _ContactPageState extends State<ContactPage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(_editedContact.name ?? "New contact"),
+          centerTitle: true,
         ),
         body: SingleChildScrollView(
           padding: EdgeInsets.all(32),
@@ -52,6 +54,17 @@ class _ContactPageState extends State<ContactPage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               GestureDetector(
+                onTap: () {
+                  ImagePicker.pickImage(source: ImageSource.camera)
+                      .then((file) {
+                    if (file == null)
+                      return;
+                    else
+                      setState(() {
+                        _editedContact.img = file.path;
+                      });
+                  });
+                },
                 child: Container(
                   width: 100,
                   height: 100,

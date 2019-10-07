@@ -51,7 +51,7 @@ class _ContactPageState extends State<ContactPage> {
         body: SingleChildScrollView(
           padding: EdgeInsets.all(32),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               GestureDetector(
                 onTap: () {
@@ -69,10 +69,12 @@ class _ContactPageState extends State<ContactPage> {
                   width: 100,
                   height: 100,
                   decoration: BoxDecoration(
+                    shape: BoxShape.circle,
                     image: DecorationImage(
                       image: _editedContact.img != null
                           ? FileImage(File(_editedContact.img))
                           : AssetImage('images/person.png'),
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),

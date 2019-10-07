@@ -34,11 +34,11 @@ class _HomePageState extends State<HomePage> {
           PopupMenuButton<OrderOptions>(
             itemBuilder: (context) => <PopupMenuEntry<OrderOptions>>[
               const PopupMenuItem<OrderOptions>(
-                child: Text("Ordenar de A-Z"),
+                child: Text("Order A-Z"),
                 value: OrderOptions.order_az,
               ),
               const PopupMenuItem<OrderOptions>(
-                child: Text("Ordenar de Z-A"),
+                child: Text("Order Z-A"),
                 value: OrderOptions.order_za,
               )
             ],
